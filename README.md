@@ -53,50 +53,34 @@ The algorithm iteratively:
 
 ---
 
-## Variational Ansatz
+Variational Ansatz
 
-The project employs a QAOA-inspired ansatz:
+This project uses a hardware-efficient ansatz constructed from layers of parameterized (R_Y) rotations and CZ entangling gates.
 
-```math
-|\psi(\beta,\gamma)\rangle =
-e^{-i\beta \sum_i X_i}
-e^{-i\gamma \sum_{\langle i,j\rangle} Z_i Z_j}
-|+\rangle^{\otimes 3}
-```
+The ansatz follows the structure:
 
-The circuit consists of:
+Rotation Layer (RY)
+        ↓
+Entanglement Layer (CZ)
+        ↓
+Repeat (optional)
 
-### Initial State Preparation
+For each qubit, a parameterized rotation
 
-A uniform superposition state
+R_Y(\theta)
 
-```math
-|+\rangle^{\otimes 3}
-```
+creates quantum superposition, while CZ gates introduce entanglement between qubits, allowing the circuit to represent correlated many-body states.
 
-generated using Hadamard gates.
+The ansatz was implemented using Qiskit's NLocal circuit framework with:
 
-### Interaction Layer
+ansatz = n_local(
+    num_qubits=3,
+    rotation_blocks="ry",
+    entanglement_blocks="cz",
+    reps=3
+)
 
-Implements
-
-```math
-e^{-i\gamma Z_iZ_j}
-```
-
-for each edge of the frustrated triangle.
-
-### Mixer Layer
-
-Implements
-
-```math
-e^{-i\beta X_i}
-```
-
-using parameterized RX rotations.
-
-This structure naturally captures the competing interaction and transverse-field physics of the Hamiltonian.
+This hardware-efficient architecture provides a balance between expressibility and circuit depth, making it suitable for near-term quantum algorithms.
 
 ---
 
