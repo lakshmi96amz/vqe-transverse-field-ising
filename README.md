@@ -81,7 +81,24 @@ ansatz = n_local(
 )
 
 This hardware-efficient architecture provides a balance between expressibility and circuit depth, making it suitable for near-term quantum algorithms.
+---
+### Optimizer Benchmarking
 
+To systematically evaluate optimizer performance on the VQE energy landscape, two classical optimizers are benchmarked head-to-head: **COBYLA** (gradient-free, model-based) and **SPSA** (stochastic gradient approximation).
+
+Each optimizer is run for 5 independent trials with random initial parameters drawn uniformly from $[-\pi, \pi]$, with a fixed budget of 1000 function evaluations per trial. Convergence is tracked at every function call and compared against the exact ground-state energy from full diagonalization.
+
+The benchmarking evaluates:
+
+- **Convergence speed**: how quickly each optimizer drives the energy toward $E_0$ as a function of the number of function evaluations.
+- **Final accuracy**: mean and standard deviation of the converged energy across trials, and absolute error relative to the ED reference.
+- **Stability**: trial-to-trial variance, reflecting sensitivity to the random initial point.
+
+Results are summarized in `TFIM_stabilizer_benchmarking.ipynb` and the convergence curves are shown below.
+
+![Optimizer convergence curves](convergence_cobyla_spsa.png)
+
+---
 ---
 
 ## Technologies Used
@@ -94,7 +111,9 @@ This hardware-efficient architecture provides a balance between expressibility a
 
 ## Results
 
-The VQE workflow successfully converges to the ground-state energy of the frustrated TFIM and produces variational states with high overlap with the exact ground state. Ground-state energies are validated against exact diagonalization results for small system sizes, providing a benchmark for the accuracy of the variational approach.
+The VQE workflow successfully converges to the ground-state energy of the frustrated TFIM and produces variational states with high overlap with the exact ground state. Ground-state energies are validated against exact diagonalization across both optimizers, providing a quantitative benchmark for variational accuracy.
+
+Systematic benchmarking of COBYLA and SPSA over 5 independent random initializations shows that COBYLA converges more smoothly on this landscape, while SPSA exhibits larger per-step variance due to its stochastic gradient estimation. Both optimizers reach energies close to the ED reference within the 1000-evaluation budget.
 
 The project demonstrates how frustration and transverse-field strength influence the energy landscape, optimization process, and structure of the ground state.
 
